@@ -41,7 +41,7 @@ def find_browser(pkt):
             HOST_INFO[pkt["src_mac"]]["browser_version_major"].add(ord(str(pkt["payload"])[168 + 6 + 16]))
             HOST_INFO[pkt["src_mac"]]["browser_version_minor"].add(ord(str(pkt["payload"])[168 + 6 + 17]))
 
-            logging.info("Found BROWSER, IP: %s MAC: %s Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], host_comment))
+            logging.info("BROWSER, IP: %s, MAC: %s, Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], host_comment))
             return True
     return False
 
@@ -66,7 +66,7 @@ def find_mdns(pkt):
                     HOST_INFO[pkt["src_mac"]]["hostname"] = hostname
                     HOST_INFO["hostnames"].add(hostname)
 
-                    logging.info("Found mDNS, IP: %s MAC: %s Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
+                    logging.info("mDNS, IP: %s, MAC: %s, Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
                     return True
         except:
             pass
@@ -83,7 +83,7 @@ def find_llmnr(pkt):
         HOST_INFO[pkt["src_mac"]]["llmnr_hostname"].add(hostname)
         HOST_INFO["hostnames"].add(hostname)
 
-        logging.info("Found LLMNR, IP: %s MAC: %s Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
+        logging.info("LLMNR, IP: %s, MAC: %s, Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
 
         return True
     return False
@@ -98,7 +98,7 @@ def find_nbns(pkt):
             HOST_INFO[pkt["src_mac"]]["nbns_hostname"].add(hostname)
             HOST_INFO["hostnames"].add(hostname)
 
-            logging.info("Found NBNS, IP: %s MAC: %s Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
+            logging.info("NBNS, IP: %s, MAC: %s, Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
         return True
     return False
 
@@ -111,7 +111,7 @@ def find_dropbox(pkt):
         for share in dropbox_json["namespaces"]:
             HOST_INFO[pkt["src_mac"]]["dropbox_share_ids"].add(int(share))
 
-        logging.info("Found Dropbox LanSync, IP: %s MAC: %s" % (pkt["src_ip"], pkt["src_mac"]))
+        logging.info("Dropbox LanSync, IP: %s, MAC: %s," % (pkt["src_ip"], pkt["src_mac"]))
         return True
     return False
 
@@ -124,7 +124,7 @@ def find_btsync(pkt):
         for share in share_ids:
             HOST_INFO[pkt["src_mac"]]["btsync_share_ids"].add(share)
 
-        logging.info("Found BitTorrent Sync, IP: %s MAC: %s" % (pkt["src_ip"], pkt["src_mac"]))
+        logging.info("BitTorrent Sync, IP: %s, MAC: %s," % (pkt["src_ip"], pkt["src_mac"]))
         return True
     return False
 
@@ -133,7 +133,7 @@ def find_spotify(pkt):
     if pkt["dst_port"] == 57621 and pkt["payload"].startswith(b'SpotUdp'):
         HOST_INFO[pkt["src_mac"]]["spotify_user"] = True
 
-        logging.info("Found Spotify User, IP: %s MAC: %s" % (pkt["src_ip"], pkt["src_mac"]))
+        logging.info("Spotify User, IP: %s, MAC: %s," % (pkt["src_ip"], pkt["src_mac"]))
         return True
     return False
 
@@ -142,7 +142,7 @@ def find_steam(pkt):
     if pkt["dst_port"] == 27036 and pkt["payload"].startswith(b'\xff\xff\xff\xff'):
         HOST_INFO[pkt["src_mac"]]["steam_user"] = True
 
-        logging.info("Found Steam User, IP: %s MAC: %s" % (pkt["src_ip"], pkt["src_mac"]))
+        logging.info("Steam User, IP: %s, MAC: %s," % (pkt["src_ip"], pkt["src_mac"]))
         return True
     return False
 
@@ -151,7 +151,7 @@ def find_office_mac(pkt):
     if pkt["dst_port"] == 2223 and pkt["payload"].startswith(b'MSOPID'):
         HOST_INFO[pkt["src_mac"]]["office_mac_user"] = True
 
-        logging.info("Found MS Office (OSX) User, IP: %s MAC: %s" % (pkt["src_ip"], pkt["src_mac"]))
+        logging.info("MS Office (OSX) User, IP: %s, MAC: %s," % (pkt["src_ip"], pkt["src_mac"]))
         return True
     return False
 
@@ -160,7 +160,7 @@ def find_canon(pkt):
     if pkt["dst_port"] == 8612 and pkt["payload"].startswith((b'BJNP', b'BNJB', b'BJNB', b'PNJB', b'PJNB')):
         HOST_INFO[pkt["src_mac"]]["canon_bjnp"] = True
 
-        logging.info("Found Canon BJNP, IP: %s MAC: %s" % (pkt["src_ip"], pkt["src_mac"]))
+        logging.info("Canon BJNP, IP: %s, MAC: %s," % (pkt["src_ip"], pkt["src_mac"]))
         return True
     return False
 
@@ -171,7 +171,7 @@ def find_remotemouse(pkt):
         HOST_INFO[pkt["src_mac"]]["remotemouse_hostname"].add(hostname)
         HOST_INFO["hostnames"].add(hostname)
 
-        logging.info("Found remotemouse, IP: %s MAC: %s Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
+        logging.info("remotemouse, IP: %s, MAC: %s, Hostname: %s" % (pkt["src_ip"], pkt["src_mac"], hostname))
         return True
     return False
 
@@ -257,14 +257,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sniff broadcast traffic and print host info's")
     parser.add_argument("-i", "--interface", type=str, help="Interface to sniff")
     parser.add_argument("-p", "--pcap", type=str, help="PCAP file to read")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
-    if args.verbose:
-        logging.basicConfig(format=FORMAT, level=logging.INFO)
-    else:
-        logging.basicConfig(format=FORMAT, level=logging.WARNING)
+    logging.basicConfig(format=FORMAT, level=logging.INFO)
 
     main(args)
-    print("\nFrom %d multicast or broadcast packages the following information's were extract:" % HOST_INFO["packet_counter"])
-    pprint(HOST_INFO)
